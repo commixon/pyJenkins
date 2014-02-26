@@ -16,12 +16,12 @@ class Jenkins(object):
     Otherwise it just connects to the jenkins server and you have to call
     list_jobs(), list_views() etc manually
     """
-    def __init__(self, host, user=None, passdw=None, token=None,
+    def __init__(self, url, user=None, passdw=None, token=None,
                  verify=True, init=True):
         """
 
         """
-        self.host = host
+        self.url = url
         self.user = user
         self.passwd = passdw
         self.token = token
@@ -36,7 +36,7 @@ class Jenkins(object):
 
     def connect(self):
         try:
-            ret = requests.get(api_url(self.host),
+            ret = requests.get(api_url(self.url),
                                auth=(self.user, self.passwd),
                                verify=self.verify)
             if ret.ok:
@@ -61,9 +61,10 @@ class Jenkins(object):
     def list_views(self):
         views = []
         for view in self.details['views']:
-            instance = View(view['name'], view['url'])
-            self.view_details(instance)
-            views.append(instance)
+            if not view['name'] == "All":
+                instance = View(view['name'], view['url'])
+                self.view_details(instance)
+                views.append(instance)
 
         self.views = views
         return views
