@@ -9,8 +9,6 @@ class Job(object):
         self.views = views
         self.details = details
 
-__author__ = 'Chris Loukas a.k.a.:commixon, <commixon@gmail.com'
-
 
 class View(object):
     """
@@ -22,3 +20,5 @@ class View(object):
         self.jobs = jobs
         self.property = property
         self.description = description
+
+__author__ = 'Chris Loukas a.k.a.:commixon, <commixon@gmail.com'

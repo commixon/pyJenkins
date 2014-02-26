@@ -99,4 +99,14 @@ class Jenkins(object):
         except:
             pass
 
+    def start_job(self, job):
+        try:
+            ret = requests.post(job.url+"/build",
+                                auth=(self.user, self.passwd),
+                                verify=self.verify)
+
+            print ret.status_code
+        except Exception as e:
+            print e
+
 __author__ = 'Chris Loukas a.k.a.:commixon, <commixon@gmail.com'
