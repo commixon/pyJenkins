@@ -101,13 +101,20 @@ class Jenkins(object):
         except:
             pass
 
-    def start_job(self, job):
+    def start_job(self, job, params={}):
         try:
-            ret = requests.post(job.url+"/build",
-                                auth=(self.user, self.passwd),
-                                verify=self.verify)
+            if not params:
+                ret = requests.post(job.url+"/build",
+                                    auth=(self.user, self.passwd),
+                                    verify=self.verify)
 
-            print ret.status_code
+                print ret.status_code
+            else:
+                ret = requests.post(job.url+"/buildWithParameters",
+                                    auth=(self.user, self.passwd),
+                                    verify=self.verify, data=params)
+
+                print ret.status_code
         except Exception as e:
             print e
 
