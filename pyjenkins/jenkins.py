@@ -19,7 +19,21 @@ class Jenkins(object):
     def __init__(self, url, user=None, passdw=None, token=None,
                  verify=True, init=True):
         """
-        As described above....
+        :param url: The Jenkins url
+        :param user: If authentication is needed, the user used for the
+        connection
+        :param passdw: If authentication is needed, the password for the user
+        :param token: If csrf token, or any other token is to be used for
+        extra security
+        :param verify: If there is a https url and the certificate cannot be
+        verified, by default requests will raise an SSL_ERROR. However, by
+        passing verify=False we bypass the certificate verification. USE WITH
+        CARE
+        :param init: By default init is True. This means that every time you
+        initiate a Jenkins object it will try and populate everything by the
+        initialization (e.g. jobs, views, details etc). However this takes some
+        time. You could pass init=False and call self.list_jobs() explicitly
+        when you want for example to init the jobs param.
         """
         self.url = url
         self.auth = (user, passdw)
@@ -36,6 +50,11 @@ class Jenkins(object):
             self.views = self.list_views()
 
     def connect(self):
+        """
+        The initial connect to the jenkins servers
+
+        :returns ret: The response of the connection made
+        """
         try:
             ret = requests.get(api_url(self.url),
                                auth=self.auth,
@@ -50,9 +69,15 @@ class Jenkins(object):
             raise SSLError
 
     def list_jobs(self):
+        """
+        For each job found in the details dict, a new Job object is initialized
+        and added to the self.jobs list.
+
+        :returns jobs: List of Job objects
+        """
         jobs = []
         for job in self.details['jobs']:
-            instance = Job(job['name'], job['color'], url=job['url'],
+            instance = Job(job['name'], job['color'], url=self.url,
                            auth=self.auth, verify=self.verify)
             jobs.append(instance)
 
@@ -60,11 +85,20 @@ class Jenkins(object):
         return jobs
 
     def list_views(self):
+        """
+        For each view found in the details dict, a new View object is
+        initialized and added to the self.views list.
+
+        :returns views: List of View objects
+        """
         views = []
         for view in self.details['views']:
-            #if not view['name'] == "All":
-            instance = View(view['name'], view['url'])
-            views.append(instance)
+            #All is a dummy view returned by the API. It actually contains all
+            #the available jobs and thus we do not need it
+            if "All" != view['name']:
+                instance = View(view['name'], url=self.url, auth=self.auth,
+                                verify=self.verify)
+                views.append(instance)
 
         self.views = views
         return views
