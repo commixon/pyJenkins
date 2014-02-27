@@ -2,7 +2,7 @@ import requests
 import json
 
 from requests.exceptions import SSLError
-from job import Job, View
+from jobs import Job, View
 from helpers import api_url
 
 
@@ -19,9 +19,10 @@ class Jenkins(object):
     def __init__(self, url, user=None, passdw=None, token=None,
                  verify=True, init=True):
         """
-
+        As described above....
         """
         self.url = url
+        self.auth = (user, passdw)
         self.user = user
         self.passwd = passdw
         self.token = token
@@ -37,7 +38,7 @@ class Jenkins(object):
     def connect(self):
         try:
             ret = requests.get(api_url(self.url),
-                               auth=(self.user, self.passwd),
+                               auth=self.auth,
                                verify=self.verify)
             if ret.ok:
                 return ret
@@ -51,8 +52,8 @@ class Jenkins(object):
     def list_jobs(self):
         jobs = []
         for job in self.details['jobs']:
-            instance = Job(job['name'], job['color'], url=job['url'])
-            self.job_details(instance)
+            instance = Job(job['name'], job['color'], url=job['url'],
+                           auth=self.auth, verify=self.verify)
             jobs.append(instance)
 
         self.jobs = jobs
@@ -63,59 +64,31 @@ class Jenkins(object):
         for view in self.details['views']:
             #if not view['name'] == "All":
             instance = View(view['name'], view['url'])
-            self.view_details(instance)
             views.append(instance)
 
         self.views = views
         return views
 
-    def job_details(self, job):
-        """
-        This one takes the a Job object and fills the job.details with all
-        the available details
-        """
-        try:
-            details = requests.get(api_url(job.url),
-                                   auth=(self.user, self.passwd),
-                                   verify=self.verify).json()
-            job.details = details
-        except Exception as e:
-            print e
-
-    def view_details(self, view):
-        """
-        This one takes a View object. Fill the property, description and job
-        values. Furthermore, for every job that belongs to this view, it appends
-         the view's name to the Job.views list property
-        """
-        try:
-            details = requests.get(api_url(view.url),
-                                   auth=(self.user, self.passwd),
-                                   verify=self.verify).json()
-
-            view.description = details['description']
-            if view.name == "All":
-                view.jobs = self.connection.json()['jobs']
-            else:
-                view.jobs = details['jobs']
-        except:
-            pass
+    # def view_details(self, view):
+    #     """
+    #     This one takes a View object. Fill the property, description and job
+    #     values. Furthermore, for every job that belongs to this view, it appends
+    #      the view's name to the Job.views list property
+    #     """
+    #     try:
+    #         details = requests.get(api_url(view.url),
+    #                                auth=self.auth,
+    #                                verify=self.verify).json()
+    #
+    #         view.description = details['description']
+    #         if view.name == "All":
+    #             view.jobs = self.connection.json()['jobs']
+    #         else:
+    #             view.jobs = details['jobs']
+    #     except:
+    #         pass
 
     def start_job(self, job, params={}):
-        try:
-            if not params:
-                ret = requests.post(job.url+"/build",
-                                    auth=(self.user, self.passwd),
-                                    verify=self.verify)
-
-                print ret.status_code
-            else:
-                ret = requests.post(job.url+"/buildWithParameters",
-                                    auth=(self.user, self.passwd),
-                                    verify=self.verify, data=params)
-
-                print ret.status_code
-        except Exception as e:
-            print e
+        job.build(params)
 
 __author__ = 'Chris Loukas a.k.a.:commixon, <commixon@gmail.com'
