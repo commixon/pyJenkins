@@ -14,11 +14,10 @@ class View(object):
     """
 
     """
-    def __init__(self, name, url, jobs=[], property=[], description=None):
+    def __init__(self, name, url, jobs=[], description=None):
         self.name = name
         self.url = url
         self.jobs = jobs
-        self.property = property
         self.description = description
 
 __author__ = 'Chris Loukas a.k.a.:commixon, <commixon@gmail.com'

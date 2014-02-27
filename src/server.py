@@ -61,10 +61,10 @@ class Jenkins(object):
     def list_views(self):
         views = []
         for view in self.details['views']:
-            if not view['name'] == "All":
-                instance = View(view['name'], view['url'])
-                self.view_details(instance)
-                views.append(instance)
+            #if not view['name'] == "All":
+            instance = View(view['name'], view['url'])
+            self.view_details(instance)
+            views.append(instance)
 
         self.views = views
         return views
@@ -94,8 +94,10 @@ class Jenkins(object):
                                    verify=self.verify).json()
 
             view.description = details['description']
-            view.property = details['property']
-            view.jobs = details['jobs']
+            if view.name == "All":
+                view.jobs = self.connection.json()['jobs']
+            else:
+                view.jobs = details['jobs']
         except:
             pass
 
