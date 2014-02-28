@@ -1,5 +1,4 @@
 import requests
-import json
 
 from requests.exceptions import SSLError
 from jobs import Job, View
