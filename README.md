@@ -10,7 +10,7 @@ USE
 
 It is rather simple to use pyJenkins::
 
-    from pyjenkins.jenkins import Jenkins
+    from JenkinsPy.jenkins import Jenkins
     jenkins = Jenkins(url, username, passwd, verify, init)
 
 :param url: This is self-explanatory, the url of your jenkins server

@@ -10,27 +10,25 @@ requires = [
 ]
 
 setup(
-    name='pyJenkins',
+    name='JenkinsPy',
     version='0.0.1',
     license='AGPLv3',
     description='python bindings for Jenkins API',
     long_description=README,
     classifiers=[
         "Programming Language :: Python",
-        "Topic :: CI :: Jenkins",
-        "License :: GNU Affero General Public License v3",
-        "Topic :: Jenkins"
+        "Topic :: Software Development :: Testing",
+        "License :: OSI Approved :: GNU Affero General Public License v3",
     ],
-    autho="Chris Loukas <commixon>",
+    auth="Chris Loukas <commixon>",
+    author="commixon",
     author_email="commixon@gmail.com",
     url="https://github.com/commixon/pyJenkins",
     keywords="CI Continuous Integration Jenkins Hudson Testing API",
-    packages=find_packages('pyjenkins'),
-    package_dir={'':'pyjenkins'},
-    namespace_packages=['pyjenkins'],
+    packages=find_packages('JenkinsPy'),
+    package_dir={'':'JenkinsPy'},
     include_package_data=True,
     zip_safe=False,
     install_requires=requires,
-    test_require=requires,
-    test_suite='pyJenkins',
+    test_suite='JenkinsPy',
 )
