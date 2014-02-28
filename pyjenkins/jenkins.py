@@ -16,13 +16,13 @@ class Jenkins(object):
     Otherwise it just connects to the jenkins server and you have to call
     list_jobs(), list_views() etc manually
     """
-    def __init__(self, url, user=None, passdw=None, token=None,
+    def __init__(self, url, user=None, passwd=None, token=None,
                  verify=True, init=True):
         """
         :param url: The Jenkins url
         :param user: If authentication is needed, the user used for the
         connection
-        :param passdw: If authentication is needed, the password for the user
+        :param passwd: If authentication is needed, the password for the user
         :param token: If csrf token, or any other token is to be used for
         extra security
         :param verify: If there is a https url and the certificate cannot be
@@ -36,9 +36,9 @@ class Jenkins(object):
         when you want for example to init the jobs param.
         """
         self.url = url
-        self.auth = (user, passdw)
+        self.auth = (user, passwd)
         self.user = user
-        self.passwd = passdw
+        self.passwd = passwd
         self.token = token
         self.verify = verify
         self.connection = self.connect()
@@ -102,25 +102,6 @@ class Jenkins(object):
 
         self.views = views
         return views
-
-    # def view_details(self, view):
-    #     """
-    #     This one takes a View object. Fill the property, description and job
-    #     values. Furthermore, for every job that belongs to this view, it appends
-    #      the view's name to the Job.views list property
-    #     """
-    #     try:
-    #         details = requests.get(api_url(view.url),
-    #                                auth=self.auth,
-    #                                verify=self.verify).json()
-    #
-    #         view.description = details['description']
-    #         if view.name == "All":
-    #             view.jobs = self.connection.json()['jobs']
-    #         else:
-    #             view.jobs = details['jobs']
-    #     except:
-    #         pass
 
     def start_job(self, job, params={}):
         job.build(params)
